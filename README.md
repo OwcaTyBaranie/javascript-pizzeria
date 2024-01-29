@@ -1,2 +1,1 @@
-# javascript-pizzeria
-OPP- Projektowanie obiektowe w JS
+version 2.4
