@@ -70,6 +70,12 @@ const select = {
       thisProduct.initAccordion();
 
       console.log('Init Accordion:', thisProduct);
+
+      thisProduct.initOrderForm();
+
+
+      thisProduct.processOrder();
+
     }
 
     renderInMenu(){
@@ -92,7 +98,7 @@ const select = {
       thisProduct.formInputs = thisProduct.form.querySelectorAll(select.all.formInputs);
       thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
       thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
-     
+
 
     }
     initAccordion(){
@@ -114,7 +120,15 @@ const select = {
   });
 
   }
-
+  initOrderForm(){
+    const thisProduct = this;
+    console.log('Init Order Form:', thisProduct);
+    
+  }
+  processOrder(){
+    const thisProduct = this;
+    console.log('Process order:', thisProduct);
+  }
  }
 
 
