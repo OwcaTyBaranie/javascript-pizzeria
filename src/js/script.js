@@ -98,7 +98,7 @@ const select = {
       thisProduct.formInputs = thisProduct.form.querySelectorAll(select.all.formInputs);
       thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
       thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
-
+      thisProduct.imageWrapper = thisProduct.element.querySelector(select.menuProduct.imageWrapper);
 
     }
     initAccordion(){
@@ -141,47 +141,63 @@ const select = {
     });
 
   }
-  processOrder(){
+  processOrder() {
     const thisProduct = this;
     console.log('Process order:', thisProduct);
 
     const formData = utils.serializeFormToObject(thisProduct.form);
     console.log('formData', formData);
 
-     // set price to default price
-  let price = thisProduct.data.price;
+    // set price to default price
+    let price = thisProduct.data.price;
 
-  // for every category (param)...
-  for(let paramId in thisProduct.data.params) {
-    // determine param value, e.g. paramId = 'toppings', param = { label: 'Toppings', type: 'checkboxes'... }
-    const param = thisProduct.data.params[paramId];
-    console.log(paramId, param);
+    // for every category (param)...
+    for (let paramId in thisProduct.data.params) {
+      // determine param value, e.g. paramId = 'toppings', param = { label: 'Toppings', type: 'checkboxes'... }
+      const param = thisProduct.data.params[paramId];
+      console.log(paramId, param);
 
-    // for every option in this category
-    for(let optionId in param.options) {
-      // determine option value, e.g. optionId = 'olives', option = { label: 'Olives', price: 2, default: true }
-      const option = param.options[optionId];
-      console.log(optionId, option);
-     // Check if the option is selected in the form data
-      const isOptionSelected = formData[paramId] && formData[paramId].includes(optionId);
+      // for every option in this category
+      for (let optionId in param.options) {
+        // determine option value, e.g. optionId = 'olives', option = { label: 'Olives', price: 2, default: true }
+        const option = param.options[optionId];
+        console.log(optionId, option);
 
-     // Check if the option is the default option
-      const isDefaultOption = option.default;
+        // Check if the option is selected in the form data
+        const isOptionSelected = formData[paramId] && formData[paramId].includes(optionId);
 
-     // If the option is selected and is not the default option, add its price to the total price
-      if (isOptionSelected && !isDefaultOption) {
-        price += option.price;
-      }
-      // If the option is not selected and is the default option, subtract its price from the total price
-      if (!isOptionSelected && isDefaultOption) {
-        price -= option.price;
+        // Check if the option is the default option
+        const isDefaultOption = option.default;
+
+        // If the option is selected and is not the default option, add its price to the total price
+        if (isOptionSelected && !isDefaultOption) {
+          price += option.price;
+        }
+        // If the option is not selected and is the default option, subtract its price from the total price
+        if (!isOptionSelected && isDefaultOption) {
+          price -= option.price;
+        }
+
+        // Update image visibility based on selected option
+        const imageSelector = '.' + paramId + '-' + optionId;
+        const optionImage = thisProduct.element.querySelector(imageSelector);
+
+        // Check if optionImage is not null or undefined before accessing its properties
+        if (optionImage) {
+          // Show the image if the option is selected
+          if (isOptionSelected) {
+            optionImage.classList.add(classNames.menuProduct.imageVisible);
+          } else {
+            optionImage.classList.remove(classNames.menuProduct.imageVisible);
+          }
+        }
       }
     }
+
+    // update calculated price in the HTML
+    thisProduct.priceElem.innerHTML = price;
   }
 
-  // update calculated price in the HTML
-  thisProduct.priceElem.innerHTML = price;
-  }
  }
 
 
