@@ -213,8 +213,10 @@ const select = {
   constructor(element){
     const thisWidget = this;
     thisWidget.getElements(element);
-    thisWidget.setValue(thisWidget.input.value);
-    thisWidget.initActions(thisWidget.input.newValue);
+    thisWidget.initActions();
+    thisWidget.setValue(settings.amountWidget.defaultValue);
+
+
 
     console.log('AmountWidget:', thisWidget);
     console.log('constructor arguments:', element);
@@ -226,41 +228,51 @@ const select = {
     thisWidget.input = thisWidget.element.querySelector(select.widgets.amount.input);
     thisWidget.linkDecrease = thisWidget.element.querySelector(select.widgets.amount.linkDecrease);
     thisWidget.linkIncrease = thisWidget.element.querySelector(select.widgets.amount.linkIncrease);
+  console.log('Input element:', thisWidget.input);
+  console.log('Decrease button element:', thisWidget.linkDecrease);
+  console.log('Increase button element:', thisWidget.linkIncrease);
   }
   setValue(value){
     const thisWidget = this;
-
+    const minValue = settings.amountWidget.defaultMin;
+    const maxValue = settings.amountWidget.defaultMax;
     const newValue = parseInt(value);
 
     /* TODO: Add validation */
 
-    if(thisWidget.value !== newValue && !isNaN(newValue)){
-       thisWidget.value = newValue;
+    if(thisWidget.value !== newValue && !isNaN(newValue) && newValue >= minValue && newValue <= maxValue) {
+       thisWidget.value = newValue
+
     }
+     //Update the widget value
+     thisWidget.input.value = thisWidget.value;
+     console.log('New value set:', thisWidget.value);
 
   }
   initActions(){
     const thisWidget = this;
      // Event listener dla zmiany wartości inputa
-     thisWidget.input.addEventListener('change', function(){
+     thisWidget.input.addEventListener('change', ()=>{
+      //console.log('Input value changed:', thisWidget.value);
       thisWidget.setValue(thisWidget.input.value);
      });
      // Event listener dla przycisku zmniejszenia
-     thisWidget.linkDecrease.addEventListener('click', function (event){
+     thisWidget.linkDecrease.addEventListener('click', (event)=>{
       event.preventDefault(); // Powstrzymaj domyślną akcję dla tego eventu
       thisWidget.setValue(thisWidget.value - 1);
      });
      // Event listener dla przycisku zwiększenia
-     thisWidget.linkIncrease.addEventListener('click', function(event){
+     thisWidget.linkIncrease.addEventListener('click', (event)=>{
       event.preventDefault(); // Powstrzymaj domyślną akcję dla tego eventu
       thisWidget.setValue(thisWidget.value +1);
      });
+     //console.log('initActions completed');
   }
 }
   const app = {
     initMenu: function() {
       const thisApp = this;
-      console.log('thisApp.data:', thisApp.data);
+      //console.log('thisApp.data:', thisApp.data);
       for(let productData in thisApp.data.products){
         new Product(productData, thisApp.data.products[productData]);
       }
