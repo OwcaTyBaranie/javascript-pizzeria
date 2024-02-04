@@ -197,21 +197,28 @@ const select = {
         }
       }
     }
-
+    //multiply price by amount
+    price *= thisProduct.amountWidget.value;
     // update calculated price in the HTML
     thisProduct.priceElem.innerHTML = price;
   }
   initAmountWidget(){
     const thisProduct = this;
 
-    thisProduct.amountWidget = new AmountWidget(thisProduct.amountWidgetElem);
+    thisProduct.amountWidget = new AmountWidget(thisProduct.amountWidgetElem, thisProduct);
+  }
+  announce(){
+    const thisWidget = this;
+    const event = new Event('update');
+    thisWidget.element.dispatchEvent(event);
   }
 
  }
 
  class AmountWidget {
-  constructor(element){
+  constructor(element, productInstance){
     const thisWidget = this;
+    thisWidget.productInstance = productInstance;
     thisWidget.getElements(element);
     thisWidget.initActions();
     thisWidget.setValue(settings.amountWidget.defaultValue);
@@ -241,7 +248,9 @@ const select = {
     /* TODO: Add validation */
 
     if(thisWidget.value !== newValue && !isNaN(newValue) && newValue >= minValue && newValue <= maxValue) {
-       thisWidget.value = newValue
+       thisWidget.value = newValue;
+       // Wywołaj announce z klasy Product
+       thisWidget.productInstance.announce();
 
     }
      //Update the widget value
@@ -268,6 +277,7 @@ const select = {
      });
      //console.log('initActions completed');
   }
+
 }
   const app = {
     initMenu: function() {
