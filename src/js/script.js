@@ -196,34 +196,32 @@ class Product{
     / add element to menu /
     menuContainer.appendChild(thisProduct.element);
   }
-
-  getElements(){
+  getElements() {
     const thisProduct = this;
-    thisProduct.accordionTrigger = thisProduct.element.querySelector(select.menuProduct.clickable);
-    console.log('Accordion Trigger:', thisProduct.accordionTrigger);
-    thisProduct.form = thisProduct.element.querySelector(select.menuProduct.form);
-    thisProduct.formInputs = thisProduct.form.querySelectorAll(select.all.formInputs);
-    thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
-    thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
-    thisProduct.imageWrapper = thisProduct.element.querySelector(select.menuProduct.imageWrapper);
-    thisProduct.amountWidgetElem = thisProduct.element.querySelector(select.menuProduct.amountWidget);
-
+    thisProduct.dom = {};
+    thisProduct.dom.accordionTrigger = thisProduct.element.querySelector(select.menuProduct.clickable);
+    thisProduct.dom.form = thisProduct.element.querySelector(select.menuProduct.form);
+    thisProduct.dom.formInputs = thisProduct.dom.form.querySelectorAll(select.all.formInputs);
+    thisProduct.dom.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
+    thisProduct.dom.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
+    thisProduct.dom.imageWrapper = thisProduct.element.querySelector(select.menuProduct.imageWrapper);
+    thisProduct.dom.amountWidgetElem = thisProduct.element.querySelector(select.menuProduct.amountWidget);
   }
   initAccordion(){
     const thisProduct = this;
 
-  / START: add event listener to clickable trigger on event click /
-  thisProduct.accordionTrigger.addEventListener('click', function(event) {
-    / prevent default action for event /
+  // START: add event listener to clickable trigger on event click /
+  thisProduct.dom.accordionTrigger.addEventListener('click', function(event) {
+    // prevent default action for event /
   event.preventDefault();
-    / find active product (product that has active class) /
+    // find active product (product that has active class) /
   const activeProduct = document.querySelector('.product.active');
-    / if there is active product and it's not thisProduct.element, remove class active from it /
+    // if there is active product and it's not thisProduct.element, remove class active from it /
   if (activeProduct && activeProduct !== thisProduct.element) {
       activeProduct.classList.remove('active');
   }
 
-    / toggle active class on thisProduct.element /
+    // toggle active class on thisProduct.element /
   thisProduct.element.classList.toggle('active');
 });
 
@@ -232,18 +230,18 @@ initOrderForm(){
   const thisProduct = this;
   console.log('Init Order Form:', thisProduct);
 
-  thisProduct.form.addEventListener('submit', function(event){
+  thisProduct.dom.form.addEventListener('submit', function(event){
     event.preventDefault();
     thisProduct.processOrder();
   });
 
-  for(let input of thisProduct.formInputs){
+  for(let input of thisProduct.dom.formInputs){
     input.addEventListener('change', function(){
       thisProduct.processOrder();
     });
   }
 
-  thisProduct.cartButton.addEventListener('click', function(event){
+  thisProduct.dom.cartButton.addEventListener('click', function(event){
     event.preventDefault();
     thisProduct.processOrder();
   });
@@ -304,17 +302,14 @@ processOrder() {
   //multiply price by amount
   price *= thisProduct.amountWidget.value;
   // update calculated price in the HTML
-  thisProduct.priceElem.innerHTML = price;
+  thisProduct.dom.priceElem.innerHTML = price;
 }
-initAmountWidget(){
+initAmountWidget() {
   const thisProduct = this;
-
-  thisProduct.amountWidget = new AmountWidget(thisProduct.amountWidgetElem, thisProduct);
-// Upewnij się, że element istnieje przed dodaniem listenera
-if (thisProduct.amountWidget.element) {
-  // Add Event Listener for the 'update' event on thisProduct.amountWidget
-  thisProduct.amountWidget.element.addEventListener('update', function () {
-    thisProduct.processOrder();
+  thisProduct.amountWidget = new AmountWidget(thisProduct.dom.amountWidgetElem, thisProduct);
+  if (thisProduct.amountWidget.element) {
+    thisProduct.amountWidget.element.addEventListener('update', function () {
+      thisProduct.processOrder();
   });
 }
 }
