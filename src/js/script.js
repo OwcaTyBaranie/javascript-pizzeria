@@ -320,6 +320,7 @@ class Cart {
 
     thisCart.products = [];
     thisCart.getElements(element);
+    thisCart.initActions();
 
     console.log('new Cart:', thisCart);
   }
@@ -329,8 +330,16 @@ class Cart {
 
     thisCart.dom = {};
     thisCart.dom.wrapper = element;
-    thisCart.dom.toggleTrigger = element.querySelector(select.cart.toggleTrigger);
+    thisCart.dom.toggleTrigger = thisCart.dom.wrapper.querySelector(select.cart.toggleTrigger);
     // Dodaj kolejne referencje do elementów DOM, które są używane w Cart
+  }
+  initActions(){
+    const thisCart = this;
+    if (thisCart.dom.toggleTrigger) {
+      thisCart.dom.toggleTrigger.addEventListener('click', function () {
+        thisCart.dom.wrapper.classList.toggle(classNames.cart.wrapperActive);
+      });
+    }
   }
 
   // Dodaj kolejne metody, które są związane z funkcjonalnością koszyka
