@@ -115,7 +115,7 @@
     const maxValue = settings.amountWidget.defaultMax;
     const newValue = parseInt(value);
 
-    / TODO: Add validation /
+    // TODO: Add validation /
 
     if(thisWidget.value !== newValue && !isNaN(newValue) && newValue >= minValue && newValue <= maxValue) {
        thisWidget.value = newValue;
@@ -187,13 +187,13 @@ class Product{
 
   renderInMenu(){
     const thisProduct = this;
-    / generate HTML based on template /
+    // generate HTML based on template /
     const generatedHTML = templates.menuProduct(thisProduct.data);
-    / create element using utils.createElementFromHTML /
+    // create element using utils.createElementFromHTML /
     thisProduct.element = utils.createDOMFromHTML(generatedHTML);
-    / find menu container /
+    // find menu container /
     const menuContainer = document.querySelector(select.containerOf.menu);
-    / add element to menu /
+    // add element to menu /
     menuContainer.appendChild(thisProduct.element);
   }
   getElements() {
@@ -244,6 +244,7 @@ initOrderForm(){
   thisProduct.dom.cartButton.addEventListener('click', function(event){
     event.preventDefault();
     thisProduct.processOrder();
+    thisProduct.addToCart();
   });
 
 }
@@ -301,6 +302,8 @@ processOrder() {
   }
   //multiply price by amount
   price *= thisProduct.amountWidget.value;
+  //Give thisProduct new property priceSingle
+  thisProduct.priceSingle = thisProduct.data.price;
   // update calculated price in the HTML
   thisProduct.dom.priceElem.innerHTML = price;
 }
@@ -312,6 +315,25 @@ initAmountWidget() {
       thisProduct.processOrder();
   });
 }
+}
+addToCart(){
+  const thisProduct = this;
+
+  app.cart.add(thisProduct);
+}
+prepareCartProduct() {
+  const thisProduct = this;
+  const totalPrice = thisProduct.priceSingle * thisProduct.amount;
+
+  const productSummary = {
+    id: thisProduct.id,
+    name: thisProduct.name,
+    amount: thisProduct.amount,
+    priceSingle: thisProduct.priceSingle,
+    price: totalPrice,
+  };
+  return productSummary;
+
 }
 }
 class Cart {
@@ -340,6 +362,11 @@ class Cart {
         thisCart.dom.wrapper.classList.toggle(classNames.cart.wrapperActive);
       });
     }
+  }
+  add(menuProduct){
+    //const thisCart = this;
+
+    console.log('adding product', menuProduct);
   }
 
   // Dodaj kolejne metody, które są związane z funkcjonalnością koszyka
