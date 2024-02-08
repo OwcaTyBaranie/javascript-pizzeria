@@ -250,10 +250,10 @@ initOrderForm(){
 }
 processOrder() {
   const thisProduct = this;
-  console.log('Process order:', thisProduct);
+
 
   const formData = utils.serializeFormToObject(thisProduct.dom.form);
-  console.log('formData', formData);
+
 
   // set price to default price
   let price = thisProduct.data.price;
@@ -337,40 +337,36 @@ prepareCartProduct() {
   return productSummary;
 
 }
-prepareCartProductParams(){
+prepareCartProductParams() {
   const thisProduct = this;
 
-  //dostęp do formularza
   const formData = utils.serializeFormToObject(thisProduct.dom.form);
-  const params = {}; //Inicjalizacja obiektu podsumowania
+  const params = {};
 
-  // for every category (param)...
-  for (let paramId in thisProduct.data.params) {
-    // determine param value, e.g. paramId = 'toppings', param = { label: 'Toppings', type: 'checkboxes'... }
+  // for every category (param)
+  for(let paramId in thisProduct.data.params) {
     const param = thisProduct.data.params[paramId];
 
-    params[paramId] = { //dodanie kategorii do obiektu podsumowania
+    // create category param in params const eg. params = { ingredients: { name: 'Ingredients', options: {}}}
+    params[paramId] = {
       label: param.label,
       options: {}
     };
 
-
     // for every option in this category
-    for (let optionId in param.options) {
-      // determine option value, e.g. optionId = 'olives', option = { label: 'Olives', price: 2, default: true }
+    for(let optionId in param.options) {
       const option = param.options[optionId];
-
-
-      // Check if the option is selected in the form data
       const optionSelected = formData[paramId] && formData[paramId].includes(optionId);
 
-      // Jeśli opcja jest wybrana, dodaj ją do obiektu podsumowania dla danej kategorii
-      if (optionSelected) {
-        params[paramId].options[optionId] = option.label;
+      if(optionSelected) {
+        // option is selected!
+        // Add the selected option to the options object of the category param
+        params[paramId].options[paramId] = option.label;
       }
     }
   }
-  return params; //zwrócenie obiektu podsumowania
+
+  return params;
 }
 }
 class Cart {
@@ -390,6 +386,7 @@ class Cart {
     thisCart.dom = {};
     thisCart.dom.wrapper = element;
     thisCart.dom.toggleTrigger = thisCart.dom.wrapper.querySelector(select.cart.toggleTrigger);
+    thisCart.dom.productList = thisCart.dom.wrapper.querySelector(select.containerOf.menuProduct);
     // Dodaj kolejne referencje do elementów DOM, które są używane w Cart
   }
   initActions(){
@@ -401,7 +398,21 @@ class Cart {
     }
   }
   add(menuProduct){
-    //const thisCart = this;
+    const thisCart = this;
+
+    // generate HTML based on template /
+    const generatedHTML = menuProduct.renderInMenu();
+    // change generated HTML to DOM element /
+    const generatedDOM = utils.createDOMFromHTML(generatedHTML);
+    // find menu container /
+    const menuContainer = document.querySelector(select.containerOf.menu);
+    //Add the generated DOM element to the product list in the cart
+    menuContainer.appendChild(generatedDOM);
+
+    // Optionally, you may want to keep track of the added product in the cart
+  thisCart.products.push(menuProduct);
+
+  console.log('Adding product:', menuProduct);
 
     console.log('adding product', menuProduct);
   }
