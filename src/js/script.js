@@ -272,7 +272,7 @@ processOrder() {
 
       // Check if the option is selected in the form data
       const isOptionSelected = formData[paramId] && formData[paramId].includes(optionId);
-      
+
 
       // Check if the option is the default option
       const isDefaultOption = option.default;
@@ -332,10 +332,45 @@ prepareCartProduct() {
     amount: thisProduct.amount,
     priceSingle: thisProduct.priceSingle,
     price: totalPrice,
-    params: {},
+    params: thisProduct.prepareCartProductParams(),
   };
   return productSummary;
 
+}
+prepareCartProductParams(){
+  const thisProduct = this;
+
+  //dostęp do formularza
+  const formData = utils.serializeFormToObject(thisProduct.dom.form);
+  const params = {}; //Inicjalizacja obiektu podsumowania
+
+  // for every category (param)...
+  for (let paramId in thisProduct.data.params) {
+    // determine param value, e.g. paramId = 'toppings', param = { label: 'Toppings', type: 'checkboxes'... }
+    const param = thisProduct.data.params[paramId];
+
+    params[paramId] = { //dodanie kategorii do obiektu podsumowania
+      label: param.label,
+      options: {}
+    };
+
+
+    // for every option in this category
+    for (let optionId in param.options) {
+      // determine option value, e.g. optionId = 'olives', option = { label: 'Olives', price: 2, default: true }
+      const option = param.options[optionId];
+
+
+      // Check if the option is selected in the form data
+      const optionSelected = formData[paramId] && formData[paramId].includes(optionId);
+
+      // Jeśli opcja jest wybrana, dodaj ją do obiektu podsumowania dla danej kategorii
+      if (optionSelected) {
+        params[paramId].options[optionId] = option.label;
+      }
+    }
+  }
+  return params; //zwrócenie obiektu podsumowania
 }
 }
 class Cart {
