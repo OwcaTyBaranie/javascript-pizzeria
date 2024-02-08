@@ -252,7 +252,7 @@ processOrder() {
   const thisProduct = this;
   console.log('Process order:', thisProduct);
 
-  const formData = utils.serializeFormToObject(thisProduct.form);
+  const formData = utils.serializeFormToObject(thisProduct.dom.form);
   console.log('formData', formData);
 
   // set price to default price
@@ -262,16 +262,17 @@ processOrder() {
   for (let paramId in thisProduct.data.params) {
     // determine param value, e.g. paramId = 'toppings', param = { label: 'Toppings', type: 'checkboxes'... }
     const param = thisProduct.data.params[paramId];
-    console.log(paramId, param);
+
 
     // for every option in this category
     for (let optionId in param.options) {
       // determine option value, e.g. optionId = 'olives', option = { label: 'Olives', price: 2, default: true }
       const option = param.options[optionId];
-      console.log(optionId, option);
+
 
       // Check if the option is selected in the form data
       const isOptionSelected = formData[paramId] && formData[paramId].includes(optionId);
+      
 
       // Check if the option is the default option
       const isDefaultOption = option.default;
@@ -331,6 +332,7 @@ prepareCartProduct() {
     amount: thisProduct.amount,
     priceSingle: thisProduct.priceSingle,
     price: totalPrice,
+    params: {},
   };
   return productSummary;
 
