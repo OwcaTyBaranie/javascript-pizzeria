@@ -320,7 +320,7 @@ initAmountWidget() {
 addToCart(){
   const thisProduct = this;
 
-  app.cart.add(thisProduct);
+  app.cart.add(thisProduct.prepareCartProduct());
 }
 prepareCartProduct() {
   const thisProduct = this;
@@ -361,7 +361,7 @@ prepareCartProductParams() {
       if(optionSelected) {
         // option is selected!
         // Add the selected option to the options object of the category param
-        params[paramId].options[paramId] = option.label;
+        params[paramId].options[optionId] = option.label;
       }
     }
   }
@@ -386,7 +386,7 @@ class Cart {
     thisCart.dom = {};
     thisCart.dom.wrapper = element;
     thisCart.dom.toggleTrigger = thisCart.dom.wrapper.querySelector(select.cart.toggleTrigger);
-    thisCart.dom.productList = thisCart.dom.wrapper.querySelector(select.containerOf.menuProduct);
+    thisCart.dom.productList = thisCart.dom.wrapper.querySelector(select.cart.productList);
     // Dodaj kolejne referencje do elementów DOM, które są używane w Cart
   }
   initActions(){
@@ -397,17 +397,19 @@ class Cart {
       });
     }
   }
-  add(menuProduct){
-    const thisCart = this;
 
+  add(menuProduct){
+
+    const thisCart = this;
+    console.log('adding product', menuProduct);
     // generate HTML based on template /
-    const generatedHTML = menuProduct.renderInMenu();
+    const generatedHTML = templates.cartProduct(menuProduct);
     // change generated HTML to DOM element /
     const generatedDOM = utils.createDOMFromHTML(generatedHTML);
-    // find menu container /
-    const menuContainer = document.querySelector(select.containerOf.menu);
+    // Find the product list container in the cart
+    const productListContainer = thisCart.dom.productList;
     //Add the generated DOM element to the product list in the cart
-    menuContainer.appendChild(generatedDOM);
+    productListContainer.appendChild(generatedDOM);
 
     // Optionally, you may want to keep track of the added product in the cart
   thisCart.products.push(menuProduct);
