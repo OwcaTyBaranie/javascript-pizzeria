@@ -163,24 +163,11 @@ class Product{
     thisProduct.id = id;
     thisProduct.data = data;
 
-
     thisProduct.renderInMenu();
-
-    console.log('new Product:', thisProduct);
-
     thisProduct.getElements();
-
-    console.log('Get All Elements:', thisProduct);
-
     thisProduct.initAccordion();
-
-    console.log('Init Accordion:', thisProduct);
-
     thisProduct.initOrderForm();
-
     thisProduct.initAmountWidget();
-    console.log('Init Amount Widget:', thisProduct);
-
     thisProduct.processOrder();
 
   }
@@ -324,14 +311,13 @@ addToCart(){
 }
 prepareCartProduct() {
   const thisProduct = this;
-  const totalPrice = thisProduct.priceSingle * thisProduct.amount;
 
   const productSummary = {
     id: thisProduct.id,
-    name: thisProduct.name,
-    amount: thisProduct.amount,
+    name: thisProduct.data.name,
+    amount: thisProduct.amountWidget.value,
     priceSingle: thisProduct.priceSingle,
-    price: totalPrice,
+    price: thisProduct.priceSingle * thisProduct.amountWidget.value,
     params: thisProduct.prepareCartProductParams(),
   };
   return productSummary;
@@ -377,7 +363,7 @@ class Cart {
     thisCart.getElements(element);
     thisCart.initActions();
 
-    console.log('new Cart:', thisCart);
+
   }
 
   getElements(element) {
@@ -406,17 +392,8 @@ class Cart {
     const generatedHTML = templates.cartProduct(menuProduct);
     // change generated HTML to DOM element /
     const generatedDOM = utils.createDOMFromHTML(generatedHTML);
-    // Find the product list container in the cart
-    const productListContainer = thisCart.dom.productList;
-    //Add the generated DOM element to the product list in the cart
-    productListContainer.appendChild(generatedDOM);
-
-    // Optionally, you may want to keep track of the added product in the cart
-  thisCart.products.push(menuProduct);
-
-  console.log('Adding product:', menuProduct);
-
-    console.log('adding product', menuProduct);
+    //Add element to menu
+    thisCart.dom.productList.appendChild(generatedDOM);
   }
 
   // Dodaj kolejne metody, które są związane z funkcjonalnością koszyka
