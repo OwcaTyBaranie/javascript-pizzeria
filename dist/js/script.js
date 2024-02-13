@@ -89,12 +89,15 @@
     const thisWidget = this;
     console.profile('thisWidget', thisWidget);
     this.element = element;
+    console.log('element', element);
     this.productInstance = productInstance;
-
+    console.log('productInstance', productInstance);
 
     this.getElements(element);
     this.initActions();
     this.setValue(settings.amountWidget.defaultValue);
+    this.renderValue();
+
   }
   getElements(element){
     const thisWidget = this;
@@ -121,13 +124,17 @@
      thisWidget.input.value = thisWidget.value;
 
     }
+    renderValue() {
+      const thisWidget = this;
+      thisWidget.input.value = thisWidget.value;
+      console.log(thisWidget.input);
+      console.log(thisWidget.value);
+    }
   announce() {
       const thisWidget = this;
       const event = new Event('update');
-      if (thisWidget.productInstance && thisWidget.productInstance.amountWidget) {
-        thisWidget.productInstance.amountWidget.element.dispatchEvent(event);
-      }
-      console.log('Price updated. New price:', thisWidget.productInstance.price);
+        thisWidget.element.dispatchEvent(event);
+
   }
   initActions(){
     const thisWidget = this;
@@ -135,19 +142,16 @@
      thisWidget.input.addEventListener('change', ()=>{
       //console.log('Input value changed:', thisWidget.value);
       thisWidget.setValue(thisWidget.input.value);
-      thisWidget.announce();
      });
      // Event listener dla przycisku zmniejszenia
      thisWidget.linkDecrease.addEventListener('click', (event)=>{
       event.preventDefault(); // Powstrzymaj domyślną akcję dla tego eventu
       thisWidget.setValue(thisWidget.value - 1);
-      thisWidget.announce();
      });
      // Event listener dla przycisku zwiększenia
      thisWidget.linkIncrease.addEventListener('click', (event)=>{
       event.preventDefault(); // Powstrzymaj domyślną akcję dla tego eventu
       thisWidget.setValue(thisWidget.value +1);
-      thisWidget.announce();
      });
      //console.log('initActions completed');
   }
@@ -290,6 +294,10 @@ processOrder() {
   // update calculated price in the HTML
   thisProduct.dom.priceElem.innerHTML = price;
 }
+
+/* thisProduct.priceSingle = price;
+thisProduct.price = thisProduct.priceSingle * thisProduct.amountWidget.value;
+thisProduct.dom.priceElem.innerHTML =  thisProduct.price; */
 initAmountWidget() {
   const thisProduct = this;
   thisProduct.amountWidget = new AmountWidget(thisProduct.dom.amountWidgetElem, thisProduct);
@@ -405,6 +413,7 @@ class CartProduct{
     thisCartProduct.id = menuProduct.id;
     thisCartProduct.name = menuProduct.name;
     thisCartProduct.amount = menuProduct.amount;
+    console.log(menuProduct.amount);
     thisCartProduct.price = menuProduct.price;
     thisCartProduct.priceSingle = menuProduct.priceSingle;
 
@@ -426,16 +435,21 @@ class CartProduct{
   }
   initAmountWidget(){
     const thisCartProduct = this;
+console.log(thisCartProduct.dom.amountWidgetElem);
+    thisCartProduct.amountWidget = new AmountWidget(thisCartProduct.dom.amountWidgetElem);
 
-    thisCartProduct.amountWidget = new AmountWidget(thisCartProduct.dom.amountWidgetElem, thisCartProduct.amount);
-
-    if(thisCartProduct.amountWidget.element) {
-      thisCartProduct.dom.amountWidgetElem.addEventListener('updated', function(){
+    if(thisCartProduct.amountWidget.element)
+    {
+      thisCartProduct.dom.amountWidgetElem.addEventListener('update', function(){
+        console.log('executed')
         thisCartProduct.amount = thisCartProduct.amountWidget.value;
+        console.log(thisCartProduct.amount);
         thisCartProduct.price = thisCartProduct.priceSingle * thisCartProduct.amount;
+        console.log(thisCartProduct.price);
         thisCartProduct.dom.price.innerHTML = thisCartProduct.price;
-      });
-    }
+        console.log(thisCartProduct.dom.price.innerHTML);
+      });}
+
 
   }
 
@@ -451,11 +465,11 @@ class CartProduct{
 
     init: function(){
       const thisApp = this;
-      console.log('** App starting **');
-      console.log('thisApp:', thisApp);
-      console.log('classNames:', classNames);
-      console.log('settings:', settings);
-      console.log('templates:', templates);
+      // console.log('** App starting **');
+      // console.log('thisApp:', thisApp);
+      // console.log('classNames:', classNames);
+      // console.log('settings:', settings);
+      // console.log('templates:', templates);
       thisApp.initData();
       thisApp.initMenu();
       thisApp.initCart();
