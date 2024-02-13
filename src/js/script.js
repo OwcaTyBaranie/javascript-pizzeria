@@ -90,6 +90,8 @@
     console.profile('thisWidget', thisWidget);
     this.element = element;
     this.productInstance = productInstance;
+
+
     this.getElements(element);
     this.initActions();
     this.setValue(settings.amountWidget.defaultValue);
@@ -125,6 +127,7 @@
       if (thisWidget.productInstance && thisWidget.productInstance.amountWidget) {
         thisWidget.productInstance.amountWidget.element.dispatchEvent(event);
       }
+      console.log('Price updated. New price:', thisWidget.productInstance.price);
   }
   initActions(){
     const thisWidget = this;
@@ -407,7 +410,7 @@ class CartProduct{
 
     thisCartProduct.getElements(element);
     thisCartProduct.initAmountWidget();
-    thisCartProduct.initActions();
+
 
   }
   getElements(element){
@@ -419,54 +422,21 @@ class CartProduct{
       price: element.querySelector(select.cartProduct.price),
       edit: element.querySelector(select.cartProduct.edit),
       remove: element.querySelector(select.cartProduct.remove),
-    }
+    };
   }
   initAmountWidget(){
     const thisCartProduct = this;
 
     thisCartProduct.amountWidget = new AmountWidget(thisCartProduct.dom.amountWidgetElem, thisCartProduct.amount);
-    thisCartProduct.dom.amountWidgetElem.addEventListener('updated', function(){
-      thisCartProduct.amount = thisCartProduct.amountWidget.value;
-      thisCartProduct.price = thisCartProduct.priceSingle * thisCartProduct.amount;
-      thisCartProduct.dom.price.innerHTML = thisCartProduct.price;
-    });
-  }
-  remove(){
-    const thisCartProduct = this;
 
-    const event = new CustomEvent('remove', {
-      bubbles: true,
-      detail: {
-        cartProduct: thisCartProduct,
-      },
-    });
+    if(thisCartProduct.amountWidget.element) {
+      thisCartProduct.dom.amountWidgetElem.addEventListener('updated', function(){
+        thisCartProduct.amount = thisCartProduct.amountWidget.value;
+        thisCartProduct.price = thisCartProduct.priceSingle * thisCartProduct.amount;
+        thisCartProduct.dom.price.innerHTML = thisCartProduct.price;
+      });
+    }
 
-    thisCartProduct.dom.wrapper.dispatchEvent(event);
-  }
-  initActions(){
-    const thisCartProduct = this;
-
-    thisCartProduct.dom.edit.addEventListener('click', function(event){
-      event.preventDefault();
-    });
-    thisCartProduct.dom.remove.addEventListener('click', function(event){
-      event.preventDefault();
-      thisCartProduct.remove();
-    });
-  }
-  getData(){
-    const thisCartProduct = this;
-
-    const productsDataForOrder = {
-      id: thisCartProduct.id,
-      amount: thisCartProduct.amount,
-      price: thisCartProduct.price,
-      priceSingle: thisCartProduct.priceSingle,
-      name: thisCartProduct.name,
-      params: thisCartProduct.params
-    };
-
-    return productsDataForOrder;
   }
 
 }
