@@ -105,7 +105,7 @@
   renderValue() {
   const thisWidget = this;
   thisWidget.dom.input.value = thisWidget.value;
-  console.log(thisWidget.dom.input.value);
+
   }
   announce() {
   const thisWidget = this;
@@ -116,7 +116,7 @@
   const thisWidget = this;
   // Event listener dla zmiany wartości inputa
   thisWidget.input.addEventListener('change', () => {
-  //console.log('Input value changed:', thisWidget.value);
+
   thisWidget.setValue(thisWidget.input.value);
   });
   // Event listener dla przycisku zmniejszenia
@@ -130,7 +130,7 @@
   event.preventDefault(); // Powstrzymaj domyślną akcję dla tego eventu
   thisWidget.setValue(thisWidget.value + 1);
   });
-  //console.log('initActions completed');
+
   }
   }
   class Product {
@@ -322,7 +322,7 @@
   }
   add(menuProduct) {
   const thisCart = this;
-  //console.log('adding product', menuProduct);
+
   // generate HTML based on template /
   const generatedHTML = templates.cartProduct(menuProduct);
   // change generated HTML to DOM element /
@@ -331,15 +331,14 @@
   thisCart.dom.productList.appendChild(generatedDOM);
   //Use array thisCart.products []
   thisCart.products.push(new CartProduct(menuProduct, generatedDOM));
-  // console.log('thisCart.products', thisCart.products);
+
   }
   // Dodaj kolejne metody, które są związane z funkcjonalnością koszyka
   }
   class CartProduct {
   constructor(menuProduct, element) {
   const thisCartProduct = this;
-  console.log(menuProduct);
-  console.log(element);
+
   thisCartProduct.id = menuProduct.id;
   thisCartProduct.name = menuProduct.name;
   thisCartProduct.amount = menuProduct.amount;
@@ -353,7 +352,6 @@
   thisCartProduct.dom = {}
   thisCartProduct.dom.wrapper = element;
   thisCartProduct.dom.amountWidgetElem = element.querySelector(select.cartProduct.amountWidget);
-  console.log(thisCartProduct.dom.amountWidgetElem)
   thisCartProduct.dom.price = element.querySelector(select.cartProduct.price);
   thisCartProduct.dom.edit = element.querySelector(select.cartProduct.edit);
   thisCartProduct.dom.remove = element.querySelector(select.cartProduct.remove);
@@ -371,18 +369,13 @@
   const app = {
   initMenu: function () {
   const thisApp = this;
-  //console.log('thisApp.data:', thisApp.data);
+
   for (let productData in thisApp.data.products) {
   new Product(productData, thisApp.data.products[productData]);
   }
   },
   init: function () {
   const thisApp = this;
-  // console.log('** App starting **');
-  // console.log('thisApp:', thisApp);
-  // console.log('classNames:', classNames);
-  // console.log('settings:', settings);
-  // console.log('templates:', templates);
   thisApp.initData();
   thisApp.initMenu();
   thisApp.initCart();
