@@ -94,8 +94,8 @@
 
 
 
-      if (thisWidget.dom.input.value !== '') {
-        thisWidget.setValue(thisWidget.dom.input.value);
+      if (thisWidget.value !== '') {
+        thisWidget.setValue(thisWidget.value);
       } else {
         thisWidget.setValue(settings.amountWidget.defaultValue);
       }
@@ -119,32 +119,26 @@
         const thisWidget = this;
         const minValue = settings.amountWidget.defaultMin;
         const maxValue = settings.amountWidget.defaultMax;
+        thisWidget.value = settings.amountWidget.defaultValue;
+
         const newValue = parseInt(value);
         console.log(newValue)
 
         if (thisWidget.value !== newValue && !isNaN(newValue) && newValue >= minValue && newValue <= maxValue) {
           thisWidget.value = newValue;
-          console.log(thisWidget.value)
           // Wywołaj announce z klasy Product
           thisWidget.announce();
 
-        } else if (isNaN(newValue)){
-          thisWidget.value = settings.amountWidget.defaultValue;
         }
         thisWidget.dom.input.value = thisWidget.value;
 
+
       }
 
-      // isValid(value) {
-      //   return !isNaN(value)
-      //     && value >= settings.amountWidget.defaultMin
-      //     && value <= settings.amountWidget.defaultMax;
-      // }
 
       renderValue() {
         const thisWidget = this;
         thisWidget.dom.input.value = thisWidget.value;
-        console.log(thisWidget.dom.input.value);
 
       }
       announce() {
@@ -158,17 +152,17 @@
         // Event listener dla zmiany wartości inputa
         thisWidget.dom.input.addEventListener('change', () => {
           //console.log('Input value changed:', thisWidget.value);
-          thisWidget.setValue(thisWidget.dom.input.value);
+          thisWidget.setValue(thisWidget.value);
         });
         // Event listener dla przycisku zmniejszenia
         thisWidget.dom.linkDecrease.addEventListener('click', (event) => {
           event.preventDefault(); // Powstrzymaj domyślną akcję dla tego eventu
-          thisWidget.setValue(thisWidget.dom.input.value - 1);
+          thisWidget.setValue(thisWidget.value - 1);
         });
         // Event listener dla przycisku zwiększenia
         thisWidget.dom.linkIncrease.addEventListener('click', (event) => {
           event.preventDefault(); // Powstrzymaj domyślną akcję dla tego eventu
-          thisWidget.setValue(thisWidget.dom.input.value + 1);
+          thisWidget.setValue(thisWidget.value + 1);
 
         });
         //console.log('initActions completed');
@@ -306,7 +300,7 @@
         }
       }
       //multiply price by amount
-      price *= thisProduct.amountWidget.dom.input.value;
+      price *= thisProduct.amountWidget.value;
       //Give thisProduct new property priceSingle
       thisProduct.priceSingle = thisProduct.data.price;
       // update calculated price in the HTML
