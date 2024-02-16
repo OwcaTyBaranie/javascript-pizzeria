@@ -69,7 +69,7 @@
     amountWidget: {
       defaultValue: 1,
       defaultMin: 1,
-      defaultMax: 9,
+      defaultMax: 10,
     },
 
     cart: {
@@ -120,15 +120,13 @@
         const minValue = settings.amountWidget.defaultMin;
         const maxValue = settings.amountWidget.defaultMax;
         thisWidget.value = settings.amountWidget.defaultValue;
-
         const newValue = parseInt(value);
-        console.log(newValue)
+
 
         if (thisWidget.value !== newValue && !isNaN(newValue) && newValue >= minValue && newValue <= maxValue) {
           thisWidget.value = newValue;
           // Wywołaj announce z klasy Product
           thisWidget.announce();
-
         }
         thisWidget.dom.input.value = thisWidget.value;
 
@@ -152,7 +150,7 @@
         // Event listener dla zmiany wartości inputa
         thisWidget.dom.input.addEventListener('change', () => {
           //console.log('Input value changed:', thisWidget.value);
-          thisWidget.setValue(thisWidget.value);
+          thisWidget.setValue(thisWidget.input.value);
         });
         // Event listener dla przycisku zmniejszenia
         thisWidget.dom.linkDecrease.addEventListener('click', (event) => {
@@ -416,8 +414,6 @@
   class CartProduct {
     constructor(menuProduct, element) {
       const thisCartProduct = this;
-      console.log(menuProduct);
-      console.log(element);
 
       thisCartProduct.id = menuProduct.id;
       thisCartProduct.name = menuProduct.name;
@@ -443,7 +439,6 @@
     }
     initAmountWidget() {
       const thisCartProduct = this;
-      console.log(thisCartProduct.dom.amountWidgetElem);
       thisCartProduct.amountWidget = new AmountWidget(thisCartProduct.dom.amountWidgetElem);
 
       if (thisCartProduct.amountWidget.element) {
@@ -453,8 +448,8 @@
           console.log(thisCartProduct.amount);
           thisCartProduct.price = thisCartProduct.priceSingle * thisCartProduct.amount;
           console.log(thisCartProduct.price);
-          thisCartProduct.dom.price.innerHTML = thisCartProduct.price;
-          console.log(thisCartProduct.dom.price.innerHTML);
+          thisCartProduct.price.innerHTML = thisCartProduct.price;
+          console.log(thisCartProduct.price.innerHTML);
         });
       }
 
