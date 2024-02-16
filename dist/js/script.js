@@ -69,7 +69,7 @@
     amountWidget: {
       defaultValue: 1,
       defaultMin: 1,
-      defaultMax: 10,
+      defaultMax: 9,
     },
 
     cart: {
@@ -88,85 +88,77 @@
     constructor(element) {
       const thisWidget = this;
 
-
       thisWidget.getElements(element);
-      thisWidget.initActions();
-
-
-
-      if (thisWidget.value !== '') {
-        thisWidget.setValue(thisWidget.value);
-      } else {
-        thisWidget.setValue(settings.amountWidget.defaultValue);
-      }
-
-
-      }
-
-
-      getElements(element) {
-        const thisWidget = this;
-
-        thisWidget.dom = {};
-        thisWidget.dom.wrapper = element;
-        thisWidget.dom.input = thisWidget.dom.wrapper.querySelector(select.widgets.amount.input);
-
-
-        thisWidget.dom.linkDecrease = thisWidget.dom.wrapper.querySelector(select.widgets.amount.linkDecrease);
-        thisWidget.dom.linkIncrease = thisWidget.dom.wrapper.querySelector(select.widgets.amount.linkIncrease);
-      }
-      setValue(value){
-        const thisWidget = this;
-        const minValue = settings.amountWidget.defaultMin;
-        const maxValue = settings.amountWidget.defaultMax;
-        thisWidget.value = settings.amountWidget.defaultValue;
-        const newValue = parseInt(value);
-
-
-        if (thisWidget.value !== newValue && !isNaN(newValue) && newValue >= minValue && newValue <= maxValue) {
-          thisWidget.value = newValue;
-          // Wywołaj announce z klasy Product
-          thisWidget.announce();
-        }
-        thisWidget.dom.input.value = thisWidget.value;
-
-
-      }
-
-
-      renderValue() {
-        const thisWidget = this;
-        thisWidget.dom.input.value = thisWidget.value;
-
-      }
-      announce() {
-        const thisWidget = this;
-        const event = new Event('update');
-        thisWidget.dom.wrapper.dispatchEvent(event);
-
-      }
-      initActions() {
-        const thisWidget = this;
-        // Event listener dla zmiany wartości inputa
-        thisWidget.dom.input.addEventListener('change', () => {
-          //console.log('Input value changed:', thisWidget.value);
-          thisWidget.setValue(thisWidget.input.value);
-        });
-        // Event listener dla przycisku zmniejszenia
-        thisWidget.dom.linkDecrease.addEventListener('click', (event) => {
-          event.preventDefault(); // Powstrzymaj domyślną akcję dla tego eventu
-          thisWidget.setValue(thisWidget.value - 1);
-        });
-        // Event listener dla przycisku zwiększenia
-        thisWidget.dom.linkIncrease.addEventListener('click', (event) => {
-          event.preventDefault(); // Powstrzymaj domyślną akcję dla tego eventu
-          thisWidget.setValue(thisWidget.value + 1);
-
-        });
-        //console.log('initActions completed');
-      }
+      thisWidget.initActions()
+      thisWidget.setValue(settings.amountWidget.defaultValue);
 
     }
+
+
+    getElements(element) {
+      const thisWidget = this;
+
+      thisWidget.dom = {};
+      thisWidget.element = element;
+      thisWidget.dom.input = thisWidget.element.querySelector(select.widgets.amount.input);
+      thisWidget.dom.linkDecrease = thisWidget.element.querySelector(select.widgets.amount.linkDecrease);
+      thisWidget.dom.linkIncrease = thisWidget.element.querySelector(select.widgets.amount.linkIncrease);
+    }
+    setValue(value) {
+      const thisWidget = this;
+
+      const newValue = parseInt(value);
+
+      if (thisWidget.value !== newValue && thisWidget.isValid(newValue)) {
+        thisWidget.value = newValue;
+        thisWidget.announce();
+
+      }
+      thisWidget.dom.input.value = thisWidget.value;
+
+    }
+
+    isValid(value) {
+      return !isNaN(value)
+        && value >= settings.amountWidget.defaultMin
+        && value <= settings.amountWidget.defaultMax;
+    }
+
+    renderValue() {
+      const thisWidget = this;
+      thisWidget.dom.input.value = thisWidget.value;
+      console.log(thisWidget.dom.input.value);
+
+    }
+    announce() {
+      const thisWidget = this;
+      const event = new Event('update');
+      thisWidget.element.dispatchEvent(event);
+
+    }
+    initActions() {
+      const thisWidget = this;
+      // Event listener dla zmiany wartości inputa
+      thisWidget.dom.input.addEventListener('change', () => {
+        //console.log('Input value changed:', thisWidget.value);
+        thisWidget.setValue(thisWidget.dom.input.value);
+
+      });
+      // Event listener dla przycisku zmniejszenia
+      thisWidget.dom.linkDecrease.addEventListener('click', (event) => {
+        event.preventDefault(); // Powstrzymaj domyślną akcję dla tego eventu
+        thisWidget.setValue(Number(thisWidget.dom.input.value)
+          - 1);
+      });
+      // Event listener dla przycisku zwiększenia
+      thisWidget.dom.linkIncrease.addEventListener('click', (event) => {
+        event.preventDefault(); // Powstrzymaj domyślną akcję dla tego eventu
+        thisWidget.setValue(Number(thisWidget.dom.input.value) + 1);
+      });
+      //console.log('initActions completed');
+    }
+
+  }
   class Product {
     constructor(id, data) {
       const thisProduct = this;
@@ -175,9 +167,9 @@
 
       thisProduct.renderInMenu();
       thisProduct.getElements();
+      thisProduct.initAmountWidget();
       thisProduct.initAccordion();
       thisProduct.initOrderForm();
-      thisProduct.initAmountWidget();
       thisProduct.processOrder();
 
     }
@@ -298,11 +290,12 @@
         }
       }
       //multiply price by amount
-      price *= thisProduct.amountWidget.value;
+      price *= thisProduct.amountWidget.value
       //Give thisProduct new property priceSingle
       thisProduct.priceSingle = thisProduct.data.price;
       // update calculated price in the HTML
       thisProduct.dom.priceElem.innerHTML = price;
+
     }
     initAmountWidget() {
       const thisProduct = this;
@@ -414,6 +407,8 @@
   class CartProduct {
     constructor(menuProduct, element) {
       const thisCartProduct = this;
+      console.log(menuProduct);
+      console.log(element);
 
       thisCartProduct.id = menuProduct.id;
       thisCartProduct.name = menuProduct.name;
@@ -429,16 +424,18 @@
     getElements(element) {
       const thisCartProduct = this;
 
-      thisCartProduct.dom = {
-        wrapper: element,
-        amountWidgetElem: element.querySelector(select.cartProduct.amountWidget),
-        price: element.querySelector(select.cartProduct.price),
-        edit: element.querySelector(select.cartProduct.edit),
-        remove: element.querySelector(select.cartProduct.remove),
-      };
+      thisCartProduct.dom = {}
+      thisCartProduct.dom.wrapper = element
+      thisCartProduct.dom.amountWidgetElem = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.amountWidget);
+      thisCartProduct.dom.price = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.price);
+      thisCartProduct.dom.edit = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.edit);
+      thisCartProduct.dom.remove = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.remove);
+
     }
+
     initAmountWidget() {
       const thisCartProduct = this;
+      console.log(thisCartProduct.dom.amountWidgetElem);
       thisCartProduct.amountWidget = new AmountWidget(thisCartProduct.dom.amountWidgetElem);
 
       if (thisCartProduct.amountWidget.element) {
@@ -448,8 +445,8 @@
           console.log(thisCartProduct.amount);
           thisCartProduct.price = thisCartProduct.priceSingle * thisCartProduct.amount;
           console.log(thisCartProduct.price);
-          thisCartProduct.price.innerHTML = thisCartProduct.price;
-          console.log(thisCartProduct.price.innerHTML);
+          thisCartProduct.dom.price.textContent = thisCartProduct.price;
+          console.log(thisCartProduct.dom.price.innerHTML);
         });
       }
 
