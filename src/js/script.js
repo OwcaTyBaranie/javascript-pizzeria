@@ -391,7 +391,7 @@
     const thisCart = this;
     //Usunięcie reprezentacji produktu z HTML-a
     cartProduct.dom.wrapper.remove();
-  
+
     //Usunięcie informacji o danym produkcie z tablicy thisCart.products
     const index = thisCart.products.indexOf(cartProduct);
     if (index !== -1) {
@@ -448,11 +448,11 @@
   }
   initActions(){
   const thisCartProduct = this;
-  thisCartProduct.dom.edit.addEventListener('edit', function(event){
+  thisCartProduct.dom.edit.addEventListener('click', function(event){
     event.preventDefault();
   })
 
-  thisCartProduct.dom.remove.addEventListener('remove', function(event){
+  thisCartProduct.dom.remove.addEventListener('click', function(event){
       event.preventDefault();
       thisCartProduct.remove();
 
