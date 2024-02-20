@@ -331,6 +331,8 @@
   thisCart.dom.totalNumber = thisCart.dom.wrapper.querySelector(select.cart.totalNumber);
 
   thisCart.dom.form = thisCart.dom.wrapper.querySelector(select.cart.form);
+  thisCart.dom.phone = thisCart.dom.wrapper.querySelector(select.cart.phone);
+            thisCart.dom.address = thisCart.dom.wrapper.querySelector(select.cart.address);
 
   // Dodaj kolejne referencje do elementów DOM, które są używane w Cart
   }
@@ -352,36 +354,9 @@
   thisCart.dom.form.addEventListener('submit', function(event){
     event.preventDefault();
     thisCart.sendOrder();
-  })
+  });
   }
-  sendOrder(){
-    const thisCart = this;
-    const url = settings.db.url + '/' + settings.db.orders;
 
-    const payload = {
-      address: thisCart.dom.address.value,
-      phone: thisCart.dom.phone.value,
-      totalPrice: thisCart.totalPriceTop,
-      subtotalPrice: thisCart.dom.subtotalPrice.innerHTML,
-      totalNumber: thisCart.dom.totalNumber.innerHTML,
-      deliveryFee: thisCart.dom.deliveryFee.innerHTML,
-      products: [],
-    }
-
-    for(let prod of thisCart.products) {
-      payload.products.push(prod.getData());
-    }
-
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    };
-
-    fetch(url, options);
-  }
   add(menuProduct) {
     const thisCart = this;
 
@@ -400,11 +375,41 @@
         // Add element to menu
         thisCart.dom.productList.appendChild(generatedDOM);
         // Use array thisCart.products []
-        thisCart.products.push(new CartProduct(menuProduct, generatedDOM));
+        const cartProduct = new CartProduct(menuProduct, generatedDOM);
+        thisCart.products.push(cartProduct);
     }
 
     // Po dodaniu lub zaktualizowaniu produktów w koszyku, wywołaj metodę update()
     thisCart.update();
+}
+sendOrder(){
+  const thisCart = this;
+  const url = settings.db.url + '/' + settings.db.orders;
+
+  const payload = {
+    address: thisCart.dom.address.value,
+    phone: thisCart.dom.phone.value,
+    totalPrice: thisCart.totalPriceTop,
+    subtotalPrice: thisCart.dom.subtotalPrice.innerHTML,
+    totalNumber: thisCart.dom.totalNumber.innerHTML,
+    deliveryFee: thisCart.dom.deliveryFee.innerHTML,
+    products: [],
+  }
+
+  for(let prod of thisCart.products) {
+    payload.products.push(prod.getData());
+  }
+  console.log('payload', payload);
+
+  const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  };
+
+  fetch(url, options);
 }
 
   update() {
