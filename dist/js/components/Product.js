@@ -1,6 +1,6 @@
-import {select, classNames, templates} from '../settings.js';
-import utils from '../utils.js';
-import AmountWidget from './AmountWidget.js';
+import {select, classNames, templates} from './settings.js';
+import  utils  from './utils.js';
+import AmountWidget from './components/AmountWidget.js';
 class Product {
     constructor(id, data) {
     const thisProduct = this;
@@ -174,4 +174,5 @@ class Product {
     return params;
     }
     }
+
     export default Product;
