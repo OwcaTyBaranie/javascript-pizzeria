@@ -71,4 +71,4 @@ class CartProduct {
     return cartProductSummary;
   }
   }
-  export default CartProduct
+  export default CartProduct;
