@@ -5,13 +5,7 @@ import Booking from './components/Booking.js';
 
 
 export const app = {
-  initBooking: function (){
-    const thisApp = this;
-    //find container of widged for reservation
-    const bookinElement = document.querySelector(select.containerOf.booking);
-    thisApp.booking = new Booking(bookinElement);
 
-  },
   initPages: function () {
     const thisApp = this;
 
@@ -34,9 +28,9 @@ export const app = {
     thisApp.activatePage(pageMatchingHash);
 
     for(let link of thisApp.navLinks){
-      link.addEventListener('click', function(event){
+      link.addEventListener('click', function(e){
         const clickedElement = this;
-        event.preventDefault();
+        e.preventDefault();
         //get page id from href attribute
         const id = clickedElement.getAttribute('href').replace('#', '');
 
@@ -47,12 +41,19 @@ export const app = {
       });
     }
   },
+  initBooking: function (){
+    const thisApp = this;
+    //find container of widged for reservation
+    const bookinElement = document.querySelector(select.containerOf.booking);
+    thisApp.booking = new Booking(bookinElement);
+
+  },
   activatePage: function (pageId) {
     const thisApp = this;
     //add class "active" to matching pages, remove from non-matching\\
 
     for(let page of thisApp.pages){
-      page.classList.toggle(classNames.pages.active, (page.id == pageId));
+      page.classList.toggle(classNames.pages.active, page.id == pageId);
     }
 
     //add class "active" to matching links, remove from non-matching
@@ -70,23 +71,7 @@ export const app = {
     new Product(thisApp.data.products[productData].id, thisApp.data.products[productData]);
   }
   },
-  init: function () {
 
-  const thisApp = this;
-  thisApp.activatePage();
-  thisApp.initData();
-  thisApp.initCart();
-  thisApp.initBooking();
-
-  },
-  initCart: function () {
-  const thisApp = this;
-  thisApp.cart = new Cart(document.querySelector(select.containerOf.cart));
-  thisApp.productList = document.querySelector(select.containerOf.menu);
-  thisApp.productList.addEventListener('add-to-cart', function (event) {
-  app.cart.add(event.detail.product);
-  });
-  },
   initData: function () {
   const thisApp = this;
   thisApp.data = {};
@@ -97,15 +82,29 @@ export const app = {
     return rawResponse.json();
   })
   .then(function(parsedResponse){
-    console.log('parsedResponse', parsedResponse);
 
     /* save parsedResponse as thisApp.data.products */
     thisApp.data.products = parsedResponse;
     /* execute initMenu method*/
     thisApp.initMenu();
   });
-
-  console.log('thisApp.data', JSON.stringify(thisApp.data));
   },
+  initCart: function () {
+    const thisApp = this;
+    thisApp.cart = new Cart(document.querySelector(select.containerOf.cart));
+    thisApp.productList = document.querySelector(select.containerOf.menu);
+    thisApp.productList.addEventListener('add-to-cart', function (event) {
+    app.cart.add(event.detail.product);
+    });
+    },
+    init: function () {
+
+      const thisApp = this;
+      thisApp.initData();
+      thisApp.initCart();
+      thisApp.initBooking();
+      thisApp.initPages();
+
+      },
   };
   app.init();
