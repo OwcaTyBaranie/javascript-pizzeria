@@ -1,29 +1,22 @@
 import { settings, select } from '../settings.js';
+import BaseWidget from './BaseWidget.js';
+class AmountWidget extends BaseWidget{
+  constructor(element) {
+  super(element,  settings.amountWidget.defaultValue);
 
-class AmountWidget {
-    constructor(element) {
     const thisWidget = this;
-    thisWidget.value = settings.amountWidget.defaultValue;
+
     thisWidget.getElements(element);
-    thisWidget.initActions()
-    thisWidget.setValue(thisWidget.input.value);
+    thisWidget.initActions();
+    console.log('AmountWidget:', thisWidget);
+
+
     }
-    getElements(element) {
+    getElements() {
     const thisWidget = this;
-    thisWidget.dom = {};
-    thisWidget.element = element;
-    thisWidget.input = thisWidget.element.querySelector(select.widgets.amount.input);
-    thisWidget.dom.linkDecrease = thisWidget.element.querySelector(select.widgets.amount.linkDecrease);
-    thisWidget.dom.linkIncrease = thisWidget.element.querySelector(select.widgets.amount.linkIncrease);
-    }
-    setValue(value) {
-    const thisWidget = this;
-    const newValue = parseInt(value);
-    if (newValue !== thisWidget.value && thisWidget.isValid(newValue)) {
-    thisWidget.value = newValue;
-    thisWidget.announce();
-    }
-    thisWidget.input.value = thisWidget.value;
+    thisWidget.dom.input = thisWidget.dom.wrapper.querySelector(select.widgets.amount.input);
+    thisWidget.dom.linkDecrease = thisWidget.dom.wrapper.querySelector(select.widgets.amount.linkDecrease);
+    thisWidget.dom.linkIncrease = thisWidget.dom.wrapper.querySelector(select.widgets.amount.linkIncrease);
     }
     isValid(value) {
     return !isNaN(value)
@@ -35,19 +28,13 @@ class AmountWidget {
     thisWidget.dom.input.value = thisWidget.value;
 
     }
-    announce() {
-    const thisWidget = this;
-    const event = new CustomEvent('update',{
-      bubbles: true
-    });
-    thisWidget.element.dispatchEvent(event);
-    }
+
     initActions() {
     const thisWidget = this;
     // Event listener dla zmiany wartości inputa
-    thisWidget.input.addEventListener('change', () => {
+    thisWidget.dom.input.addEventListener('change', () => {
 
-    thisWidget.setValue(thisWidget.input.value);
+    thisWidget.setValue(thisWidget.dom.input.value);
     });
     // Event listener dla przycisku zmniejszenia
     thisWidget.dom.linkDecrease.addEventListener('click', (event) => {
