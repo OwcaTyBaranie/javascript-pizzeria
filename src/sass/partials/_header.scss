@@ -5,6 +5,7 @@
 
   &__wrapper {
     position: relative;
+    color: $color-dark;
   }
 
 }
@@ -12,6 +13,7 @@
 .logo {
   display: inline-block;
   line-height: 1;
+  color: $color-light;
 
   &__title {
     margin: 0 0 $base-size 0;

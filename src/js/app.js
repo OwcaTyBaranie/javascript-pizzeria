@@ -100,6 +100,7 @@ export const app = {
     init: function () {
 
       const thisApp = this;
+
       thisApp.initData();
       thisApp.initCart();
       thisApp.initBooking();
