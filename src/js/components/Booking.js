@@ -1,4 +1,4 @@
-import { select, templates } from '../settings.s'
+import { select, templates } from '../settings.js'
 import utils from '../utils.js'
 import AmountWidget from './AmountWidget.js';
 class Booking {
@@ -35,13 +35,12 @@ class Booking {
         thisBooking.peopleAmount = new AmountWidget(thisBooking.dom.peopleAmount);
         thisBooking.hoursAmount = new AmountWidget(thisBooking.dom.hoursAmount);
 
-        thisBooking.dom.wrapper.addEventListener('updated', function () {
-            thisBooking.updateDOM();
+        thisBooking.dom.hoursAmount.addEventListener('change', function () {
+
           });
 
-          thisBooking.dom.formSubmit.addEventListener('submit', function(event){
-            event.preventDefault();
-            thisBooking.sendBooking();
+        thisBooking.dom.peopleAmount.addEventListener('change', function(){
+
           });
      }
 }
