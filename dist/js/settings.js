@@ -99,7 +99,7 @@ booking: {
     tableIdAttribute: 'data-table',
 },
       db: {
-        url: '//' + window.location.hostname + (window.location.hostname=='localhost' ? ':3131' : ''),
+        url: '//localhost:3131',
         products: 'products',
         orders: 'orders',
         bookings: 'bookings',
