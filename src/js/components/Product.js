@@ -117,11 +117,10 @@ class Product {
     initAmountWidget() {
     const thisProduct = this;
     thisProduct.amountWidget = new AmountWidget(thisProduct.dom.amountWidgetElem, thisProduct);
-    if (thisProduct.amountWidget.element) {
-    thisProduct.amountWidget.element.addEventListener('update', function () {
+    thisProduct.dom.amountWidgetElem.addEventListener('update', function () {
     thisProduct.processOrder();
     });
-    }
+
     }
     addToCart() {
         const thisProduct = this;

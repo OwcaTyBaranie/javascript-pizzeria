@@ -1,20 +1,23 @@
 import { settings, select } from '../settings.js';
 import BaseWidget from './BaseWidget.js';
 class AmountWidget extends BaseWidget{
-  constructor(element) {
+  constructor(element, amount) {
   super(element,  settings.amountWidget.defaultValue);
 
     const thisWidget = this;
 
-    thisWidget.getElements(element);
+    thisWidget.getElements(amount);
     thisWidget.initActions();
-    
+    thisWidget.setValue(thisWidget.dom.input.value);
+
 
 
     }
-    getElements() {
+    getElements(amount) {
     const thisWidget = this;
     thisWidget.dom.input = thisWidget.dom.wrapper.querySelector(select.widgets.amount.input);
+    thisWidget.value = amount || 1;
+    thisWidget.dom.input.value = thisWidget.value;
     thisWidget.dom.linkDecrease = thisWidget.dom.wrapper.querySelector(select.widgets.amount.linkDecrease);
     thisWidget.dom.linkIncrease = thisWidget.dom.wrapper.querySelector(select.widgets.amount.linkIncrease);
     }
@@ -33,14 +36,12 @@ class AmountWidget extends BaseWidget{
     const thisWidget = this;
     // Event listener dla zmiany wartości inputa
     thisWidget.dom.input.addEventListener('change', () => {
-
     thisWidget.value = thisWidget.dom.input.value;
     });
     // Event listener dla przycisku zmniejszenia
     thisWidget.dom.linkDecrease.addEventListener('click', (event) => {
     event.preventDefault(); // Powstrzymaj domyślną akcję dla tego eventu
-    thisWidget.setValue(thisWidget.value
-    - 1);
+    thisWidget.setValue(thisWidget.value - 1);
     });
     // Event listener dla przycisku zwiększenia
     thisWidget.dom.linkIncrease.addEventListener('click', (event) => {

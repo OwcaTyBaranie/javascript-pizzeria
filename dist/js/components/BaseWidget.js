@@ -19,10 +19,10 @@ set value(value) {
 
     const newValue = thisWidget.parseValue(value);
 
-    if (newValue != thisWidget.correctValue && thisWidget.isValid(newValue)) {
-    thisWidget.correctValue = newValue;
-    thisWidget.announce();
-    }
+    if ((thisWidget.correctValue !== newValue) && thisWidget.isValid(newValue)) {
+        thisWidget.correctValue = newValue;
+        thisWidget.announce();
+      }
     thisWidget.renderValue();
 }
 setValue(value){
