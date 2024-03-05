@@ -98,7 +98,15 @@ datePicker: {
 booking: {
     tableIdAttribute: 'data-table',
 },
-      db: {
+amountWidget: {
+  defaultValue: 1,
+  defaultMin: 1,
+  defaultMax: 9,
+  },
+  cart: {
+  defaultDeliveryFee: 20,
+  },
+db: {
         url: '//localhost:3131',
         products: 'products',
         orders: 'orders',
@@ -108,15 +116,8 @@ booking: {
         dateEndParamKey: 'date_lte',
         notRepeatParam: 'repeat=false',
         repeatParam: 'repeat_ne=false',
-      },
-    amountWidget: {
-    defaultValue: 1,
-    defaultMin: 1,
-    defaultMax: 9,
-    },
-    cart: {
-    defaultDeliveryFee: 20,
-    },
+},
+
     };
 export const templates = {
     menuProduct: Handlebars.compile(document.querySelector(select.templateOf.menuProduct).innerHTML),
