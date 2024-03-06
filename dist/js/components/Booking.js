@@ -125,9 +125,9 @@ class Booking {
       }
 
       if (
-        typeof thisBooking.booked[thisBooking.date] == 'undefined' ||
-        typeof thisBooking.booked[thisBooking.date][thisBooking.hour] ==
-          'undefined'
+        typeof thisBooking.booked[thisBooking.date] == 'undefined'
+         ||
+        typeof thisBooking.booked[thisBooking.date][thisBooking.hour] == 'undefined'
       ) {
         allAvailable = true;
       }
@@ -167,7 +167,7 @@ class Booking {
           thisBooking.dom.datePicker = element.querySelector(select.widgets.datePicker.wrapper);
           thisBooking.dom.hourPicker = element.querySelector(select.widgets.hourPicker.wrapper);
 
-          thisBooking.dom.tables = thisBooking.dom.wrapper.querySelector(select.booking.tables);
+          thisBooking.dom.tables = thisBooking.dom.wrapper.querySelectorAll(select.booking.tables);
      }
      initWidgets() {
         const thisBooking = this;
@@ -177,7 +177,7 @@ class Booking {
         thisBooking.datePickerElem = new DatePicker(thisBooking.dom.datePicker);
         thisBooking.hourPickerElem = new HourPicker(thisBooking.dom.hourPicker);
 
-        thisBooking.dom.wrapper.addEventListener('updated', function(){
+        thisBooking.dom.wrapper.addEventListener('update', function(){
           thisBooking.updateDOM();
         });
 
