@@ -6,13 +6,14 @@ class Carousel {
     const thisCarousel = this;
     this.render(element);
     this.initPlugin(element);
-    thisCarousel.element = element;
+
   }
 
   render(element) {
     const thisCarousel = this;
 
     thisCarousel.wrapper = element.querySelector(select.containerOf.carousel);
+    console.log('Executed', thisCarousel.wrapper);
   }
 
   initPlugin(element) {
@@ -20,6 +21,7 @@ class Carousel {
     thisCarousel.wrapper = element;
     const flkty = new Flickity(element, {
       // options
+      cellAlign: 'left',
       contain: true,
       imagesLoaded: true,
       autoPlay: true,

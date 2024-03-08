@@ -1,11 +1,13 @@
 import {select, templates} from '../settings.js';
 import utils from '../utils.js';
 
+
 class Home {
   constructor(element){
     const thisHome = this;
 
     thisHome.render(element);
+
   }
 
 
