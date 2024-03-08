@@ -14,7 +14,7 @@ class Home {
     const thisHome = this;
 
     /* generate HTML based on template */
-    const generatedHTML = templates.home();
+    const generatedHTML = templates.homeWidget();
     /* create element using utils.createElementFromHTML */
     thisHome.element = utils.createDOMFromHTML(generatedHTML);
     /* find menu container */
