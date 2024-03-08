@@ -1,127 +1,135 @@
-
 export const select = {
-    templateOf: {
+  templateOf: {
     menuProduct: '#template-menu-product',
     cartProduct: '#template-cart-product',
     bookingWidget: '#template-booking-widget',
-    },
-    containerOf: {
+    home: '#template-home-page',
+  },
+  containerOf: {
     menu: '#product-list',
     cart: '#cart',
     pages: '#pages',
     booking: '.booking-wrapper',
-    },
-    all: {
+    home: '.home-page-wrapper',
+  },
+  all: {
     menuProducts: '#product-list > .product',
     menuProductsActive: '#product-list > .product.active',
     formInputs: 'input, select',
-    },
-    menuProduct: {
+  },
+  menuProduct: {
     clickable: '.product__header',
     form: '.product__order',
     priceElem: '.product__total-price .price',
     imageWrapper: '.product__images',
     amountWidget: '.widget-amount',
     cartButton: '[href="#add-to-cart"]',
-    },
-    widgets: {
+  },
+  widgets: {
     amount: {
-    input: 'input.amount',
-    linkDecrease: 'a[href="#less"]',
-    linkIncrease: 'a[href="#more"]',
+      input: 'input.amount',
+      linkDecrease: 'a[href="#less"]',
+      linkIncrease: 'a[href="#more"]',
     },
     datePicker: {
       wrapper: '.date-picker',
       input: `input[name="date"]`,
-  },
-  hourPicker: {
+    },
+    hourPicker: {
       wrapper: '.hour-picker',
       input: 'input[type="range"]',
       output: '.output',
+    },
   },
-},
-booking: {
-  peopleAmount: '.people-amount',
-  hoursAmount: '.hours-amount',
-  tables: '.floor-plan .table',
-},
-nav: {
-  links: '.main-nav a',
-},
-    cart: {
+  booking: {
+    peopleAmount: '.people-amount',
+    hoursAmount: '.hours-amount',
+    tables: '.floor-plan .table',
+    formSubmit: '.booking-form',
+    address: '[name="address"]',
+    phone: '[name="phone"]',
+    starter: '.checkbox',
+  },
+  nav: {
+    links: '.main-nav a',
+  },
+  cart: {
     productList: '.cart__order-summary',
     toggleTrigger: '.cart__summary',
     totalNumber: `.cart__total-number`,
-    totalPrice_top: '.cart__total-price strong',
-    totalPrice_bottom: '.cart__order-total .cart__order-price-sum strong',
+    totalPrice: '.cart__total-price strong, .cart__order-total .cart__order-price-sum strong',
     subtotalPrice: '.cart__order-subtotal .cart__order-price-sum strong',
     deliveryFee: '.cart__order-delivery .cart__order-price-sum strong',
     form: '.cart__order',
     formSubmit: '.cart__order [type="submit"]',
     phone: '[name="phone"]',
     address: '[name="address"]',
-    },
-    cartProduct: {
+  },
+  cartProduct: {
     amountWidget: '.widget-amount',
     price: '.cart__product-price',
     edit: '[href="#edit"]',
     remove: '[href="#remove"]',
-    },
-    };
+  },
+};
+
 export const classNames = {
-    menuProduct: {
+  menuProduct: {
     wrapperActive: 'active',
     imageVisible: 'active',
-    },
-    cart: {
+  },
+  cart: {
     wrapperActive: 'active',
-    },
-    booking: {
-      loading: 'loading',
-      tableBooked: 'booked',
-      tableClicked: 'success',
+  },
+  booking: {
+    loading: 'loading',
+    tableBooked: 'booked',
+    tableClicked: 'success',
+    tables: '.floor-plan',
+    starter: 'starters',
   },
   nav: {
-      active: 'active',
+    active: 'active',
   },
   pages: {
-      active: 'active',
+    active: 'active',
   }
-    };
+};
+
 export const settings = {
+  amountWidget: {
+    defaultValue: 1,
+    defaultMin: 1,
+    defaultMax: 9,
+  },
+  cart: {
+    defaultDeliveryFee: 20,
+  },
   hours: {
     open: 12,
     close: 24,
-},
-datePicker: {
+  },
+  datePicker: {
     maxDaysInFuture: 14,
-},
-booking: {
+  },
+  booking: {
     tableIdAttribute: 'data-table',
-},
-amountWidget: {
-  defaultValue: 1,
-  defaultMin: 1,
-  defaultMax: 9,
   },
-  cart: {
-  defaultDeliveryFee: 20,
+  db: {
+    url: '//localhost:3131',
+    products: 'products',
+    orders: 'orders',
+    bookings: 'bookings',
+    events: 'events',
+    dateStartParamKey: 'date_gte',
+    dateEndParamKey: 'date_lte',
+    notRepeatParam: 'repeat=false',
+    repeatParam: 'repeat_ne=false',
   },
-db: {
-        url: '//localhost:3131',
-        products: 'products',
-        orders: 'orders',
-        bookings: 'bookings',
-        events: 'events',
-        dateStartParamKey: 'date_gte',
-        dateEndParamKey: 'date_lte',
-        notRepeatParam: 'repeat=false',
-        repeatParam: 'repeat_ne=false',
-},
+};
 
-    };
 export const templates = {
-    menuProduct: Handlebars.compile(document.querySelector(select.templateOf.menuProduct).innerHTML),
-    cartProduct: Handlebars.compile(document.querySelector(select.templateOf.cartProduct).innerHTML),
-    bookingWidget: Handlebars.compile(document.querySelector(select.templateOf.bookingWidget).innerHTML),
-    };
+  menuProduct: Handlebars.compile(document.querySelector(select.templateOf.menuProduct).innerHTML),
+  cartProduct: Handlebars.compile(document.querySelector(select.templateOf.cartProduct).innerHTML),
+  bookingWidget: Handlebars.compile(document.querySelector(select.templateOf.bookingWidget).innerHTML),
+};

@@ -77,8 +77,6 @@
     width: 170px;
   }
 
-
-
   &__product-header {
     @include flex(row, center, space-between);
   }
@@ -108,8 +106,6 @@
     }
 
   }
-
-
 
   &__action-buttons {
     @include flex(row, center, space-between);

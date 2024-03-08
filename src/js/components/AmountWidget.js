@@ -1,54 +1,50 @@
 import { settings, select } from '../settings.js';
 import BaseWidget from './BaseWidget.js';
+
 class AmountWidget extends BaseWidget{
-  constructor(element, amount) {
-  super(element,  settings.amountWidget.defaultValue);
-
+  constructor(element, amount){
+    super(element, settings.amountWidget.defaultValue);
     const thisWidget = this;
-
     thisWidget.getElements(amount);
+
     thisWidget.initActions();
+
     thisWidget.setValue(thisWidget.dom.input.value);
-
-
-
-    }
-    getElements(amount) {
+  }
+  getElements(amount){
     const thisWidget = this;
     thisWidget.dom.input = thisWidget.dom.wrapper.querySelector(select.widgets.amount.input);
     thisWidget.value = amount || 1;
     thisWidget.dom.input.value = thisWidget.value;
     thisWidget.dom.linkDecrease = thisWidget.dom.wrapper.querySelector(select.widgets.amount.linkDecrease);
     thisWidget.dom.linkIncrease = thisWidget.dom.wrapper.querySelector(select.widgets.amount.linkIncrease);
-    }
-    isValid(value) {
+  }
+
+  isValid(value){
     return !isNaN(value)
-    && value >= settings.amountWidget.defaultMin
+    && value >=settings.amountWidget.defaultMin
     && value <= settings.amountWidget.defaultMax;
-    }
-    renderValue() {
+  }
+
+  renderValue(){
     const thisWidget = this;
     thisWidget.dom.input.value = thisWidget.value;
+  }
 
-    }
-
-    initActions() {
+  initActions(){
     const thisWidget = this;
-    // Event listener dla zmiany wartości inputa
-    thisWidget.dom.input.addEventListener('change', () => {
-    thisWidget.value = thisWidget.dom.input.value;
+    thisWidget.dom.input.addEventListener('change', function(){
+      thisWidget.value = thisWidget.dom.input.value;
     });
-    // Event listener dla przycisku zmniejszenia
-    thisWidget.dom.linkDecrease.addEventListener('click', (event) => {
-    event.preventDefault(); // Powstrzymaj domyślną akcję dla tego eventu
-    thisWidget.setValue(thisWidget.value - 1);
+    thisWidget.dom.linkDecrease.addEventListener('click', function(event){
+      event.preventDefault();
+      thisWidget.setValue(thisWidget.value - 1);
     });
-    // Event listener dla przycisku zwiększenia
-    thisWidget.dom.linkIncrease.addEventListener('click', (event) => {
-    event.preventDefault(); // Powstrzymaj domyślną akcję dla tego eventu
-    thisWidget.setValue(thisWidget.value + 1);
+    thisWidget.dom.linkIncrease.addEventListener('click', function(event){
+      event.preventDefault();
+      thisWidget.setValue(thisWidget.value + 1);
     });
+  }
+}
 
-    }
-    }
-    export default AmountWidget;
+export default AmountWidget;

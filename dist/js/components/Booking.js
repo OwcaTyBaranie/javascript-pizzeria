@@ -1,207 +1,306 @@
-import { select, templates, settings, classNames } from '../settings.js'
-import utils from '../utils.js'
+import { classNames, select, settings, templates } from '../settings.js';
+import utils from '../utils.js';
 import AmountWidget from './AmountWidget.js';
 import DatePicker from './DatePicker.js';
 import HourPicker from './HourPicker.js';
+
 class Booking {
-    constructor(element){
-       const thisBooking = this;
+  constructor(element) {
+    const thisBooking = this;
 
-       thisBooking.render(element);
-       thisBooking.initWidgets();
-       thisBooking.getData();
-       thisBooking.tableSelect();
+    thisBooking.render(element);
+    thisBooking.initWidgets();
+    thisBooking.getData();
+    thisBooking.tableSelect();
+  }
 
+  getData() {
+    const thisBooking = this;
 
-    }
-    getData(){
-      const thisBooking = this;
-      const startDateParam = settings.db.dateStartParamKey + '=' + utils.dateToStr(thisBooking.datePickerElem.minDate);
-      const endDateParam = settings.db.dateEndParamKey + '=' + utils.dateToStr(thisBooking.datePickerElem.maxDate);
-      const params = {
-        booking:[
-          startDateParam,
-          endDateParam ,
-        ],
-        eventsCurrent:[
-          settings.db.notRepeatParam,
-          startDateParam,
-          endDateParam,
-        ],
-        eventsRepeat:[
-          settings.db.repeatParam,
-          endDateParam,
-        ],
+    const startDateParam =
+      settings.db.dateStartParamKey +
+      '=' +
+      utils.dateToStr(thisBooking.datePickerElem.minDate);
+    const endDateParam =
+      settings.db.dateEndParamKey +
+      '=' +
+      utils.dateToStr(thisBooking.datePickerElem.maxDate);
 
-      };
+    const params = {
+      booking: [startDateParam, endDateParam],
+      eventsCurrent: [settings.db.notRepeatParam, startDateParam, endDateParam],
+      eventsRepeat: [settings.db.repeatParam, endDateParam],
+    };
 
-      // console.log('getData params', params);
-      const urls = {
-        booking:        settings.db.url + '/' + settings.db.bookings + '?' + params.booking.join('&'),
-        eventsCurrent: settings.db.url + '/' + settings.db.events   + '?' + params.eventsCurrent.join('&'),
-        eventsRepeat:   settings.db.url + '/' + settings.db.events   + '?' + params.eventsRepeat.join('&'),
-      };
-      // console.log('getData urls', urls)
-      Promise.all([
-        fetch(urls.booking),
-        fetch(urls.eventsCurrent),
-        fetch(urls.eventsRepeat),
-      ])
-        .then(function(allResponses){
-          const  bookingsResponse = allResponses[0];
-          const  eventsCurrentResponse = allResponses[1];
-          const  eventsRepeatResponse = allResponses[2];
-          return Promise.all ([
-            bookingsResponse.json(),
-            eventsCurrentResponse.json(),
-            eventsRepeatResponse.json(),
-          ]);
-        })
-        .then(function([bookings, eventsCurrent, eventsRepeat]){
-          thisBooking.parseData(bookings, eventsCurrent, eventsRepeat);
-        });
+    const urls = {
+      booking:
+        settings.db.url +
+        '/' +
+        settings.db.bookings +
+        '?' +
+        params.booking.join('&'),
+      eventsCurrent:
+        settings.db.url +
+        '/' +
+        settings.db.events +
+        '?' +
+        params.eventsCurrent.join('&'),
+      eventsRepeat:
+        settings.db.url +
+        '/' +
+        settings.db.events +
+        '?' +
+        params.eventsRepeat.join('&'),
+    };
 
-    }
+    Promise.all([
+      fetch(urls.booking),
+      fetch(urls.eventsCurrent),
+      fetch(urls.eventsRepeat),
+    ])
+      .then(function (allResponses) {
+        const bookingsResponse = allResponses[0];
+        const eventsCurrentResponse = allResponses[1];
+        const eventsRepeatResponse = allResponses[2];
+        return Promise.all([
+          bookingsResponse.json(),
+          eventsCurrentResponse.json(),
+          eventsRepeatResponse.json(),
+        ]);
+      })
+      .then(function ([bookings, eventsCurrent, eventsRepeat]) {
+        thisBooking.parseData(bookings, eventsCurrent, eventsRepeat);
+      });
+  }
+  parseData(bookings, eventsCurrent, eventsRepeat) {
+    const thisBooking = this;
+    thisBooking.booked = {};
 
-    parseData(bookings, eventsCurrent, eventsRepeat){
-      const thisBooking = this;
-
-      thisBooking.booked = {};
-
-      for(let item of bookings){
-        thisBooking.makeBooked(item.data, item.hour, item.duration, item.table)
-      }
-      console.log('thisBooking.booked', thisBooking.booked);
-
-      for(let item of eventsCurrent){
-        thisBooking.makeBooked(item.data, item.hour, item.duration, item.table)
-      }
-
-      const minDate = thisBooking.datePickerElem.minDate;
-      const maxDate = thisBooking.datePickerElem.maxDate;
-
-      for(let item of eventsRepeat){
-        if(item.repeat == 'daily'){
-          for(let loopDate = minDate; loopDate <= maxDate; loopDate = utils.addDays(loopDate, 1)){
-            thisBooking.makeBooked(utils.dateToStr(loopDate), item.hour, item.duration, item.table);
-          }
-      }
+    for (let item of bookings) {
+      thisBooking.makeBooked(item.date, item.hour, item.duration, item.table);
     }
 
-      thisBooking.updateDOM();
+    for (let item of eventsCurrent) {
+      thisBooking.makeBooked(item.date, item.hour, item.duration, item.table);
     }
-    makeBooked(date, hour, duration, table){
-      const thisBooking = this;
 
-      if(typeof thisBooking.booked[date] == 'undefined'){
-        thisBooking.booked[date] = {};
+    const minDate = thisBooking.datePickerElem.minDate;
+    const maxDate = thisBooking.datePickerElem.maxDate;
+
+    for (let item of eventsRepeat) {
+      if (item.repeat == 'daily') {
+        for (
+          let loopDate = minDate;
+          loopDate <= maxDate;
+          loopDate = utils.addDays(loopDate, 1)
+        ) {
+          thisBooking.makeBooked(
+            utils.dateToStr(loopDate),
+            item.hour,
+            item.duration,
+            item.table
+          );
+        }
       }
+    }
+    // console.log(thisBooking.booked);
+    thisBooking.updateDOM();
+  }
 
-      const startHour = utils.hourToNumber(hour);
+  makeBooked(date, hour, duration, table) {
+    console.log(table);
+    const thisBooking = this;
 
+    if (typeof thisBooking.booked[date] == 'undefined') {
+      thisBooking.booked[date] = {};
+    }
+    const startHour = utils.hourToNumber(hour);
 
-      for(let hourBlock = startHour; hourBlock < startHour + duration; hourBlock +=  0.5 ){
-        //console.log('loop',hourBlock);
-
-      if(typeof thisBooking.booked[date][hourBlock] == 'undefined'){
+    for (
+      let hourBlock = startHour;
+      hourBlock < startHour + duration;
+      hourBlock += 0.5
+    ) {
+      if (typeof thisBooking.booked[date][hourBlock] == 'undefined') {
         thisBooking.booked[date][hourBlock] = [];
       }
 
       thisBooking.booked[date][hourBlock].push(table);
-      }
+    }
+    //console.log(thisBooking.booked);
+  }
+
+  updateDOM() {
+    const thisBooking = this;
+
+    thisBooking.date = thisBooking.datePickerElem.value;
+    thisBooking.hour = utils.hourToNumber(thisBooking.hourPickerElem.value);
+
+    let allAvailable = false;
+
+    const tables = thisBooking.element.querySelectorAll(select.booking.tables);
+
+    for (let table of tables) {
+      table.classList.remove(classNames.booking.tableClicked);
     }
 
-    updateDOM() {
-      const thisBooking = this;
+    if (
+      typeof thisBooking.booked[thisBooking.date] == 'undefined' ||
+      typeof thisBooking.booked[thisBooking.date][thisBooking.hour] ==
+        'undefined'
+    ) {
+      allAvailable = true;
+    }
 
-      thisBooking.date = thisBooking.datePickerElem.value;
-      thisBooking.hour = utils.hourToNumber(thisBooking.hourPickerElem.value);
-
-      let allAvailable = false;
-
-      const tables = thisBooking.element.querySelectorAll(select.booking.tables);
-
-      for (let table of tables) {
-        table.classList.remove(classNames.booking.tableClicked);
+    for (let table of thisBooking.dom.tables) {
+      let tableId = table.getAttribute(settings.booking.tableIdAttribute);
+      if (!isNaN(tableId)) {
+        tableId = parseInt(tableId);
       }
-
       if (
-        typeof thisBooking.booked[thisBooking.date] == 'undefined'
-         ||
-        typeof thisBooking.booked[thisBooking.date][thisBooking.hour] == 'undefined'
+        !allAvailable &&
+        thisBooking.booked[thisBooking.date][thisBooking.hour].includes(tableId)
       ) {
-        allAvailable = true;
+        table.classList.add(classNames.booking.tableBooked);
+      } else {
+        table.classList.remove(classNames.booking.tableBooked);
       }
+    }
+  }
 
-      for (let table of tables) {
-        let tableId = table.getAttribute(settings.booking.tableIdAttribute);
-        if (!isNaN(tableId)) {
-          tableId = parseInt(tableId);
-        }
+  tableSelect() {
+    const thisBooking = this;
+
+    thisBooking.element.addEventListener('click', function (event) {
+      event.preventDefault();
+      // console.log(thisBooking.dom.table);
+      const clickedElement = event.target;
+
+      const table = clickedElement.getAttribute(
+        settings.booking.tableIdAttribute
+      );
+      if (table != null) {
         if (
-          !allAvailable &&
-          thisBooking.booked[thisBooking.date][thisBooking.hour].includes(tableId)
+          !clickedElement.classList.contains(classNames.booking.tableBooked)
         ) {
-          table.classList.add(classNames.booking.tableBooked);
-        } else {
-          table.classList.remove(classNames.booking.tableBooked);
+          const isSuccess = clickedElement.classList.contains(classNames.booking.tableClicked);
+          const tables = thisBooking.element.querySelectorAll(
+            select.booking.tables
+          );
+          for (let table of tables) {
+            table.classList.remove(classNames.booking.tableClicked);
+            thisBooking.tableId = undefined;
+          }
+          if (!isSuccess) {
+            clickedElement.classList.add(classNames.booking.tableClicked);
+            thisBooking.tableId = table;
+          }
         }
       }
-    }
+    });
 
-    tableSelect(){
-      const thisBooking = this;
+  }
 
-      thisBooking.element.addEventListener('click', function(event){
-        event.preventDefault();
-        const clickedElement = event.target;
-        const table = clickedElement.getAttribute(settings.booking.tableIdAttribute);
-          if(table != null){
+  sendBooking(){
+    const thisBooking = this;
+    console.log(thisBooking);
 
-            if(!clickedElement.classList.contains(classNames.booking.tableBooked)){
-              const tables = thisBooking.element.querySelectorAll(select.booking.tables);
-                for(let table of tables){
-                  table.classList.remove(classNames.booking.tableClicked);
-                }
-                clickedElement.classList.toggle(classNames.booking.tableClicked);
-            }
-          }
-      });
-    }
+    const url = settings.db.url + '/' + settings.db.bookings;
+    const payload = {
+      date: thisBooking.datePickerElem.value,
+      hour: thisBooking.hourPickerElem.value,
+      table: Number(thisBooking.tableId),
+      duration: parseInt(thisBooking.hoursAmount.value),
+      ppl: parseInt(thisBooking.peopleAmount.value),
+      phone: thisBooking.dom.phone.value,
+      address: thisBooking.dom.address.value,
+      starters: thisBooking.starters
+    };
 
-     render(element){
-        const thisBooking = this;
-        //generate HTML from templates.bookingWidget
-         const generatedHTML = templates.bookingWidget();
-        //create empty object thisBooking.dom
-        thisBooking.element = utils.createDOMFromHTML(generatedHTML);
-        //add wrapper and connect it with referation to container of elemenet
-        const bookingContainer = document.querySelector(select.containerOf.booking);
-        //change value of wrapper(innnerHTML) for template HTML
-         bookingContainer.appendChild(thisBooking.element).innerHTML;
+    thisBooking.makeBooked(payload.date, payload.hour, payload.duration, payload.table);
 
-         thisBooking.dom = {};
-         thisBooking.dom.wrapper = element;
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    };
 
-         thisBooking.dom.hoursAmount = element.querySelector(select.booking.hoursAmount);
-          thisBooking.dom.peopleAmount = element.querySelector(select.booking.peopleAmount);
-          thisBooking.dom.datePicker = element.querySelector(select.widgets.datePicker.wrapper);
-          thisBooking.dom.hourPicker = element.querySelector(select.widgets.hourPicker.wrapper);
+    fetch(url, options);
+    thisBooking.updateDOM();
+  }
 
-          thisBooking.dom.tables = thisBooking.dom.wrapper.querySelectorAll(select.booking.tables);
-     }
-     initWidgets() {
-        const thisBooking = this;
-        thisBooking.peopleAmount = new AmountWidget(thisBooking.dom.peopleAmount);
-        thisBooking.hoursAmount = new AmountWidget(thisBooking.dom.hoursAmount);
+  render(element) {
+    const thisBooking = this;
 
-        thisBooking.datePickerElem = new DatePicker(thisBooking.dom.datePicker);
-        thisBooking.hourPickerElem = new HourPicker(thisBooking.dom.hourPicker);
+    /* generate HTML based on template */
+    const generatedHTML = templates.bookingWidget();
+    /* create element using utils.createElementFromHTML */
+    thisBooking.element = utils.createDOMFromHTML(generatedHTML);
+    /* find menu container */
+    const bookingContainer = document.querySelector(select.containerOf.booking);
+    /* add element to menu */
+    bookingContainer.appendChild(thisBooking.element).innerHTML;
 
-        thisBooking.dom.wrapper.addEventListener('update', function(){
-          thisBooking.updateDOM();
-        });
+    thisBooking.dom = {};
+    thisBooking.dom.wrapper = element;
 
-     }
+    thisBooking.dom.hoursAmount = element.querySelector(
+      select.booking.hoursAmount
+    );
+    thisBooking.dom.peopleAmount = element.querySelector(
+      select.booking.peopleAmount
+    );
+    thisBooking.dom.datePicker = element.querySelector(
+      select.widgets.datePicker.wrapper
+    );
+    thisBooking.dom.hourPicker = element.querySelector(
+      select.widgets.hourPicker.wrapper
+    );
+    thisBooking.dom.tables = thisBooking.dom.wrapper.querySelectorAll(
+      select.booking.tables
+    );
+    thisBooking.dom.table = thisBooking.dom.wrapper.querySelector(classNames.booking.tables);
+    thisBooking.dom.formSubmit = element.querySelector(select.booking.formSubmit);
+    thisBooking.dom.phone = element.querySelector(select.booking.phone);
+    thisBooking.dom.address = element.querySelector(select.booking.address);
+    thisBooking.dom.starters = element.querySelector(select.booking.starter);
+    thisBooking.starters = [];
+  }
+
+  initWidgets() {
+    const thisBooking = this;
+    thisBooking.peopleAmount = new AmountWidget(thisBooking.dom.peopleAmount);
+    thisBooking.hoursAmount = new AmountWidget(thisBooking.dom.hoursAmount);
+
+    thisBooking.datePickerElem = new DatePicker(thisBooking.dom.datePicker);
+    thisBooking.hourPickerElem = new HourPicker(thisBooking.dom.hourPicker);
+
+    thisBooking.dom.wrapper.addEventListener('updated', function () {
+      thisBooking.updateDOM();
+    });
+
+    thisBooking.dom.formSubmit.addEventListener('submit', function(event){
+      event.preventDefault();
+      thisBooking.sendBooking();
+    });
+
+    thisBooking.element.addEventListener('click', function(event){
+      const starter = event.target;
+      // debugger;
+      if(starter.getAttribute('type') === 'checkbox' && starter.getAttribute('name') === 'starter'){
+        if(starter.checked){
+          thisBooking.starters.push(starter.value);
+          console.log(thisBooking.starters);
+        } else if (!starter.checked){
+          const starterId = thisBooking.starters.indexOf(starter.value);
+          thisBooking.starters.splice(starterId, 1);
+          console.log(thisBooking.starters);
+        }
+      }
+    });
+  }
 }
+
 export default Booking;
