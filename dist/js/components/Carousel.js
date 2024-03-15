@@ -9,17 +9,17 @@ class Carousel {
 
   }
 
-  render(element) {
+  render() {
     const thisCarousel = this;
 
-    thisCarousel.wrapper = element.querySelector(select.containerOf.carousel);
+    thisCarousel.wrapper = document.querySelector('.carousel');
     console.log('Executed', thisCarousel.wrapper);
   }
 
-  initPlugin(element) {
+  initPlugin() {
     const thisCarousel = this;
     thisCarousel.wrapper = element;
-    const flkty = new Flickity(element, {
+    const flkty = new Flickity('.carousel', {
       // options
       cellAlign: 'left',
       contain: true,
