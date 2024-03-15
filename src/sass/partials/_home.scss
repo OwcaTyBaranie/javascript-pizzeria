@@ -115,7 +115,7 @@
 /* Carousel */
 
 .carousel {
-  height: $base-size * 16;
+  
   border-radius: 5px;
 }
 
@@ -146,6 +146,7 @@
 .carousel-cell {
   width: 100%; /* full width */
   height: $base-size * 16; /* height of carousel */
+
 }
 
 /* Gallery */
@@ -255,19 +256,6 @@
     align-items: center;
     overflow: hidden;
     border-radius: 5px;
-  }
-
-  .carousel {
-    visibility: hidden;
-    height: 100vh;
-    position: absolute;
-    border-radius: 5px;
-    width: 100vh;
-    display: flex;
-  }
-
-  .carousel-cell {
-    width: 80vh;
   }
 
   .gallery-image {
